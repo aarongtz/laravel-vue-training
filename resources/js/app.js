@@ -7,6 +7,7 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 Vue.component('subscribe-button', require('./components/subscribe-button.vue').default);
 Vue.component('channel-uploads', require('./components/channel-uploads.vue').default);
 Vue.component('comments', require('./components/comments.vue').default);
+Vue.component('comment', require('./components/comment.vue').default);
 Vue.component('votes', require('./components/votes.vue').default);
 
 

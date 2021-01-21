@@ -84,6 +84,7 @@
                 axios.all(uploaders).then(()=>{
                     this.videos = this.uploads;
                     this.videos.forEach(video => {
+                        console.log(video);
                         this.intervals[video.id] = setInterval(() => {
                             axios.get(`/videos/${video.id}`).then(({ data })=> {
                                 if(data.percetage == "100"){
@@ -101,7 +102,6 @@
                         }, 3000)
                     });
                 })
-                console.log(this.videos);
             }
         }
     }

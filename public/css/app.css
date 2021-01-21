@@ -10924,4 +10924,16 @@ a.text-dark:focus {
   align-items: center;
 }
 
+nav.navbar-red {
+  background-color: #ff0000 !important;
+}
+
+.navbar-red a {
+  color: #fff;
+}
+
+.navbar-red .dropdown-menu a {
+  color: #212529 !important;
+}
+
 

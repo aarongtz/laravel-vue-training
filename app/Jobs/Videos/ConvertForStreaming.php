@@ -31,7 +31,7 @@ class ConvertForStreaming implements ShouldQueue
      */
     public function handle()
     {
-        echo $this->video->id;
+        
         $lowBitRate = (new X264('aac'))->setKiloBitrate(100);
         $mediumBitRate = (new X264('aac'))->setKiloBitrate(250);
         $highBitRate = (new X264('aac'))->setKiloBitrate(500);
@@ -47,6 +47,5 @@ class ConvertForStreaming implements ShouldQueue
         ->addFormat($highBitRate)
         ->save("public/videos/{$this->video->id}/{$this->video->id}.m3u8");
     
-        echo $this->video->id;
     }
 }

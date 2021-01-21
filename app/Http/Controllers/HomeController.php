@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\{
+    User,
+    Video
+};
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -14,9 +17,19 @@ class HomeController extends Controller
     }
 
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('home');
+        $videos = Video::query();
+
+        $name = $request->name;
+
+        if(!empty($name)){
+            $videos = $videos->where('title', 'like', '%' . $name . '%');
+        }
+
+        $videos = $videos->get();
+
+        return view('welcome', compact('videos', 'name'));
     }
 
 

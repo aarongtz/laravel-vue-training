@@ -24,6 +24,8 @@ class UploadVideoController extends Controller
 
         $this->dispatch(new CreateVideoThumbnail($video));
         $this->dispatch(new ConvertForStreaming($video));
+
+        //dd(json_decode($video->title));
         
         return $video;
     }

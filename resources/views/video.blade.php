@@ -12,13 +12,13 @@
                     <div class="card-body">
                         <video
                         id="video"
-                        class="video-js"
+                        class="video-js vjs-big-play-centered"
                         controls
                         preload="auto"
                         width="640"
                         height="264"
                         poster='{{ asset(Storage::url("thumbnail/{$Video->id}.png")) }}'
-                        data-setup="{}">
+                        data-setup="{fluid: true}">
                             <source src='{{asset(Storage::url("videos/{$Video->id}/{$Video->id}.m3u8"))}}' type="application/x-mpegURL" />
                             <p class="vjs-no-js">
                                 To view this video please enable JavaScript, and consider upgrading to a
@@ -55,6 +55,11 @@
 
 @section('styles')
     <link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet" />
+    <style>
+        .video-js{
+            width: 100% !important;
+        }
+    </style>
 @endsection
 
 @section('scripts')

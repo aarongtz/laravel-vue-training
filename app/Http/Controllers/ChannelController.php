@@ -37,7 +37,8 @@ class ChannelController extends Controller
 
     public function show(Channel $channel)
     {
-        return view('channels.show', compact('channel'));
+        $videos = $channel->videos()->get();
+        return view('channels.show', compact('channel', 'videos'));
     }
 
     public function edit(Channel $channel)

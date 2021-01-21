@@ -1,17 +1,20 @@
 <template>
     <div class="card mt-5 p-5" >
 
-        <div class="media">
+        <div v-if="auth" class="media">
             <div class="media-body">
                 <div class="form-inline my-4 w-full comment-container">
                     <img class="rounded-circle mr-3"  src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="">
-                    <input type="text" class="fomr-control form-control-sm w-90" placeholder="Add a comment">
-                    <button class="btn btn-sm btn-primary ml-2">Comment</button>
+                    <input v-model="newComment" type="text" class="fomr-control form-control-sm w-90" placeholder="Add a comment">
+                    <button @click="addComment" class="btn btn-sm btn-primary ml-2">Comment</button>
                 </div>
             </div>
         </div>
         <h4>Comments</h4>
         <hr>
+
+        <Comment v-for='comment in comments.data' :key="comment.id" :comment="comment" :video="video" />
+
         <div class="media" v-if="isDataFetched">
             <!-- COMMENT -->
             <div class="media-body">
@@ -27,7 +30,10 @@
                 </div> 
             </div>
         </div>
-        <div class="text-center">
+
+        
+
+        <div class="text-center" v-if="currentPage < lastPage">
             <button @click="fetchComments" class=" btn btn-success mt-2">load more</button>
         </div>
         
@@ -35,31 +41,45 @@
 </template>
 
 <script>
-import Avatar from 'vue-avatar'
+import Avatar from 'vue-avatar';
+import Comment from './comment.vue';
 
     export default {
         name: "comments",
-        components:{Avatar},
+        components:{Avatar, Comment},
         props:{
             video:{type: Object, required: true, default: ()=>({})},
             channel:{required: true, default: ()=>({})}
+        },
+        computed:{
+            
+            auth(){
+                return __auth();
+            }
+            
         },
         data: function(){
             return{
                 dataComments: [],
                 isDataFetched: false,
                 userInf: [],
-                page: 1
+                page: 1,
+                newComment: '',
+                comments: {
+                    data: []
+                },
+                currentPage: 1,
+                lastPage: 0
             }
         },
         methods:{
             getName: function(id){
                 let user = this.userInf.filter((item)=>{
-                    // console.log(item.comment_id + "==" + id)
+                    
                     return item.comment_id == id;
                 })
                 if(user[0]){
-                    // console.log(user[0].name);
+
                     return user[0];
                 }
                 else{
@@ -67,12 +87,32 @@ import Avatar from 'vue-avatar'
                 }
 
             },
+            addComment: function(){
+                if(!this.newComment){
+                    return;
+                }
+
+                axios.post(`/comments/${this.video.id}`, {
+                    body: this.newComment
+                }).then(({data}) => {
+                    this.comments = {
+                        ...this.comments
+                    };
+
+                    this.comments.data = [
+                        data,
+                        ...this.comments.data
+                    ];
+
+                    this.newComment = '';
+                });
+            },
             fetchComments: function(){
-                console.log(`/videos/${this.video.id}/comments?page=${this.page}`);
+                /*
       
                 axios.get(`/videos/${this.video.id}/comments?page=${this.page}`)
                 .then((response)=>{
-                    console.log(response.data);
+                    
                     let newData = response.data.data.filter(()=>true);
                     const maxPage = response.data.last_page;
                     if(this.page <= maxPage){
@@ -80,9 +120,9 @@ import Avatar from 'vue-avatar'
                             this.dataComments.push(item)
                         })
                         this.dataComments.forEach(element => {
-                            // console.log(element);
+                            // 
                             axios.get(`/user/${element.user_id}`).then((res)=>{
-                                console.log(res);
+                                
                                 res.data['comment_id'] = element.id;
                                 this.userInf = [
                                     ...this.userInf,
@@ -96,9 +136,27 @@ import Avatar from 'vue-avatar'
                         this.$forceUpdate();
                         this.page++;
                     }
-                    else{
-                        alert('No more comments to load');
+
+                    if(this.page == maxPage){
+                        this.showLoadMoreBtn = false;
                     }
+                })*/
+
+                const url = this.comments.next_page_url ? this.comments.next_page_url : `/videos/${this.video.id}/comments`;
+
+                
+
+                axios.get(url).then(({ data }) => {
+                    this.comments = {
+                        ...data,
+                        data: [
+                            ...this.comments.data,
+                            ...data.data
+                        ]
+                    }
+
+                    this.lastPage = data.last_page;
+                    this.currentPage = data.current_page;
                 })
                 
             }
